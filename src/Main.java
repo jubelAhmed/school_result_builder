@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.sql.Array;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -15,6 +16,8 @@ public class Main {
             TeacherControl teacherControl = new TeacherControl();
             StudentControl studentControl = new StudentControl();
             SchoolClassControl schoolClassControl = new SchoolClassControl();
+
+
 
     // create teacher account
             Teacher t = new Teacher("jubel","jubel8180@gmail.com","1234");
@@ -31,9 +34,11 @@ public class Main {
 
             SchoolClass eight_a = new SchoolClass("eight","A",class_eight_subjects);
             SchoolClass eight_b= new SchoolClass("eight","B",class_eight_subjects);
+            SchoolClass eight_c= new SchoolClass("eight","B",class_eight_subjects);
 
-            System.out.println(schoolClassControl.addClass(eight_a));
-            System.out.println(schoolClassControl.addClass(eight_b));
+            schoolClassControl.addClass(eight_a);
+            schoolClassControl.addClass(eight_b);
+            schoolClassControl.addClass(eight_c);
 
     // create students
             Student student1 = new Student("joy",1,eight_a);
@@ -43,12 +48,15 @@ public class Main {
             Student student5 = new Student("kolim",5,eight_a);
             Student student6 = new Student("bk",6,eight_a);
 
-            HashMap mp =  studentControl.addStudent(student2);
+            HashMap mp =  studentControl.addStudent(student1);
 
-            System.out.println(mp.keySet().toArray()[0]);
-            System.out.println(mp.values().toArray()[0]);
+            //System.out.println(mp.keySet().toArray()[0]);
+            //System.out.println(mp.values().toArray()[0]);
+            studentControl.addStudent(student2);
             studentControl.addStudent(student3);
             studentControl.addStudent(student4);
+            studentControl.addStudent(student5);
+            studentControl.addStudent(student6);
 
 
 
@@ -73,6 +81,103 @@ public class Main {
                         if(login){
 
                             System.out.println("you are logged in");
+                            while (true){
+                                System.out.println("1 : Enter Marks");
+                                System.out.println("0 : Exit");
+                                try{
+                                    String option_str = sc.nextLine();
+                                    int option = Integer.parseInt(option_str);
+                                    if(option >=0 && option < 2){
+                                        if(option == 0){
+                                            return;
+                                        }else if(option == 1){
+                                            while (true){
+                                                int i = 1;
+                                                System.out.println("Select the class name with section: ");
+                                                for(SchoolClass scl: schoolClassControl.getSchoolClassList()){
+
+                                                    System.out.println(i + " : "+scl.getClassName() + " and section : "+scl.getSectionName());
+                                                    i++;
+                                                }
+                                                System.out.println(i+ " : Beak" );
+                                                System.out.println("0 : Exit" );
+                                                try{
+                                                    String classOptionStr = sc.nextLine();
+                                                    int classOption = Integer.parseInt(classOptionStr);
+                                                    if(classOption >=0 && classOption<=i){
+                                                        if(classOption == 0){
+                                                            return;
+                                                        }else if(classOption == i){
+                                                            break;
+                                                        }else{
+                                                            SchoolClass selectedSchoolClass = schoolClassControl.getSchoolClassList().get(classOption-1);
+                                                            //System.out.println(selectedSchoolClass.getClassName() + " "+selectedSchoolClass.getSectionName());
+                                                            try{
+                                                                System.out.println("How many student marks do you want to add ? ");
+                                                                String addStudentNmbrStr = sc.nextLine();
+                                                                int addStudentNumbr = Integer.parseInt(addStudentNmbrStr);
+                                                                if(addStudentNumbr>0 && addStudentNumbr<=40){
+                                                                    LinkedList<Student> providedStudents = new LinkedList<>();
+                                                                    for(int k = 0 ; k<addStudentNumbr ; k++){
+                                                                        System.out.println("Please provide student roll number : ");
+                                                                        try {
+
+                                                                            String rollNumberStr = sc.nextLine();
+                                                                            int rollNumber = Integer.parseInt(rollNumberStr);
+
+                                                                            if(rollNumber>0 && rollNumber<=40) {
+                                                                                Student std = studentControl.getSingleStudent(rollNumber,selectedSchoolClass);
+
+                                                                                if(std==null){
+                                                                                    System.out.println("Roll number "+rollNumber+" is not found in the class");
+                                                                                }else{
+                                                                                    Marks m = new Marks(studentControl);
+                                                                                    m.updateMarks(std);
+                                                                                    providedStudents.add(std);
+                                                                                }
+                                                                            }else{
+                                                                                System.out.println("This roll number is not valid");
+                                                                            }
+
+                                                                        }catch (Exception e){
+                                                                            System.out.println("Please Provide valid input");
+                                                                        }
+                                                                    }
+                                                                    System.out.println(studentControl.showProvidedStudentResult(providedStudents));
+
+                                                                }
+                                                                else{
+                                                                    System.out.println("Please provide valid length of input");
+                                                                }
+                                                            }catch (Exception e){
+                                                                System.out.println("Provide valid input");
+                                                            }
+
+
+
+                                                        }
+                                                    }else{
+                                                        System.out.println("Please provide valid input");
+                                                    }
+
+                                                }catch (Exception e){
+                                                    System.out.println("Please provide valid input");
+                                                }
+
+                                            }
+
+                                        }
+                                    }else{
+                                        System.out.println("Please Provide valid input");
+                                    }
+
+                                }catch (Exception e){
+                                    System.out.println("Please Provide valid input");
+                                }
+
+
+
+                            }
 
                         }else {
                             System.out.println(ConsoleColors.RED + "Email and password does not match" +

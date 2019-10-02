@@ -6,13 +6,13 @@ public class SchoolClass {
     private String sectionName;
     private String[] subjects;
     private Student student;
-    private Map marks;
+
 
     public SchoolClass(String className, String sectionName, String[] subjects) {
         this.className = className.toUpperCase();
         this.sectionName = sectionName.toUpperCase();
         this.subjects = subjects;
-        marks = new HashMap();
+
     }
 
     public String getClassName() {
@@ -47,11 +47,5 @@ public class SchoolClass {
         this.student = student;
     }
 
-    public Map getMarks() {
-        return marks;
-    }
 
-    public void setMarks(String subject,double mark) {
-        marks.put(subject,mark);
-    }
 }

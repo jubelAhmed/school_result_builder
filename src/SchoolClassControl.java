@@ -6,6 +6,10 @@ public class SchoolClassControl {
     private String[] classNames = {"One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten"} ;
     private String[] sections = {"A","B"};
 
+    public LinkedList<SchoolClass> getSchoolClassList() {
+        return schoolClassList;
+    }
+
     public SchoolClassControl(){
         schoolClassList = new LinkedList<>();
     }
