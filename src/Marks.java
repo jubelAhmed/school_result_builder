@@ -30,7 +30,7 @@ public class Marks {
             }
         }
 
-        System.out.println(studentControl.showPersonalResult(sd));
+        studentControl.showPersonalResult(sd);
 
     }
 

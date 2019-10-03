@@ -1,4 +1,5 @@
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -73,21 +74,38 @@ public class StudentControl {
         sd.setMarks(sd.getSchoolClass().getSubjects()[position],score);
     }
 
-    public String showPersonalResult(Student st){
+    public void showPersonalResult(Student st){
         StringBuffer sb = new StringBuffer();
         Map marksMap = st.getMarks();
         LinkedList marksList= new LinkedList();
-        sb.append("Student name : "+st.getName() + " and Rool is : "+st.getRoll_number() + "\n\n");
 
-        sb.append("Subject     ||     marks     ||     grade   \n\n");
+        ArrayList<String> headers = new ArrayList<String>();
+        headers.add("Subject");
+        headers.add("marks");
+        headers.add("grade");
+
+        ArrayList<ArrayList<String>> content = new ArrayList<ArrayList<String>>();
+
+        sb.append(ConsoleColors.Magenta+"\n    Student name : "+st.getName() + " || Role Number : "+st.getRoll_number() +ConsoleColors.RESET );
+
+        //sb.append("Subject     ||     marks     ||     grade   \n\n");
 
         for(Object key : marksMap.keySet()) {
+            ArrayList<String> row1 = new ArrayList<String>();
             Object value = marksMap.get(key);
-            sb.append(key + "    ||   " +value + "   ||   "+grade((Double) value) + "\n");
+           // sb.append(key + "    ||   " +value + "   ||   "+grade((Double) value) + "\n");
+            row1.add(String.valueOf(key));
+            row1.add(String.valueOf(value));
+            row1.add(grade((Double) value));
+            content.add(row1);
             marksList.add(value);
         }
-        sb.append("\nTotal Grade point is : "+ grade(totalGradePoint(marksList)) + "\n\n");
-        return sb.toString();
+
+        ConsoleTable ct = new ConsoleTable(headers,content);
+        System.out.println(sb.toString());
+        ct.printTable();
+        System.out.println(ConsoleColors.Magenta+"      Total Grade point is : "+ grade(totalGradePoint(marksList))+ConsoleColors.RESET+"\n");
+
     }
 
 
@@ -102,6 +120,7 @@ public class StudentControl {
             sb.append("Subject     ||     marks     ||     grade   \n\n");
             for(Object key : marksMap.keySet()) {
                 Object value = marksMap.get(key);
+
                 sb.append(key + "    ||   " +value + "   ||   "+grade((Double) value) + "\n");
                 marksList.add(value);
             }
@@ -111,24 +130,48 @@ public class StudentControl {
         return sb.toString();
     }
 
-    public String showProvidedStudentResult(LinkedList<Student> students){
-        StringBuffer sb = new StringBuffer();
-        System.out.println("\n\nShow All Uploaded Students Mark Sheet\n\n");
+    public void showProvidedStudentResult(LinkedList<Student> students){
+        //StringBuffer sb = new StringBuffer();
+        System.out.println(ConsoleColors.Magenta+"\n      Show All Uploaded Students Mark Sheet"+ConsoleColors.RESET);
+
+        ArrayList<String> headers = new ArrayList<String>();
+        headers.add("Roll Number");
+        headers.add("Student Name");
+
+        Student s = students.get(0);
+
+        for(int i = 0 ; i < s.getSchoolClass().getSubjects().length ; i++){
+            headers.add(s.getSchoolClass().getSubjects()[i]);
+        }
+        headers.add("Total GPA");
+
+        ArrayList<ArrayList<String>> content = new ArrayList<ArrayList<String>>();
+
         for(Student std : students){
             LinkedList marksList= new LinkedList();
             Map marksMap = std.getMarks();
-            sb.append("\n***** Student Name : "+std.getName() + " *****\n");
-            sb.append("***** Student Roll : "+std.getRoll_number() + " *****\n\n");
-            sb.append("Subject     ||     marks     ||     grade   \n\n");
+            ArrayList<String> row1 = new ArrayList<String>();
+            row1.add(String.valueOf(std.getRoll_number()));
+            row1.add(std.getName());
+//            sb.append("\n***** Student Name : "+std.getName() + " *****\n");
+//            sb.append("***** Student Roll : "+std.getRoll_number() + " *****\n\n");
+//            sb.append("Subject     ||     marks     ||     grade   \n\n");
             for(Object key : marksMap.keySet()) {
                 Object value = marksMap.get(key);
-                sb.append(key + "    ||   " +value + "   ||   "+grade((Double) value) + "\n");
+                //sb.append(key + "    ||   " +value + "   ||   "+grade((Double) value) + "\n");
+                row1.add(String.valueOf(value));
                 marksList.add(value);
             }
-            sb.append("\nTotal Grade point is : "+ grade(totalGradePoint(marksList)) + "\n\n");
+            row1.add(grade(totalGradePoint(marksList)));
+            content.add(row1);
+            //sb.append("\nTotal Grade point is : "+ grade(totalGradePoint(marksList)) + "\n\n");
         }
 
-        return sb.toString();
+        ConsoleTable ct = new ConsoleTable(headers,content);
+        //System.out.println(sb.toString());
+        ct.printTable();
+
+
     }
 
     private String grade(double marks){
@@ -140,7 +183,7 @@ public class StudentControl {
             }else if(marks >= 40){
                 return "C";
             }else{
-                return "Fail";
+                return "F";
             }
         }
         return "Invalid marks";

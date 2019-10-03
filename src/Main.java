@@ -17,7 +17,7 @@ public class Main {
             StudentControl studentControl = new StudentControl();
             SchoolClassControl schoolClassControl = new SchoolClassControl();
 
-
+            LinkedList<Student> providedStudents = new LinkedList<>();
 
     // create teacher account
             Teacher t = new Teacher("jubel","jubel8180@gmail.com","1234");
@@ -34,7 +34,7 @@ public class Main {
 
             SchoolClass eight_a = new SchoolClass("eight","A",class_eight_subjects);
             SchoolClass eight_b= new SchoolClass("eight","B",class_eight_subjects);
-            SchoolClass eight_c= new SchoolClass("eight","B",class_eight_subjects);
+            SchoolClass eight_c= new SchoolClass("nine","A",class_eight_subjects);
 
             schoolClassControl.addClass(eight_a);
             schoolClassControl.addClass(eight_b);
@@ -83,14 +83,16 @@ public class Main {
                             System.out.println("you are logged in");
                             while (true){
                                 System.out.println("1 : Enter Marks");
+                                System.out.println("2 : Show Updated Student Result");
                                 System.out.println("0 : Exit");
                                 try{
                                     String option_str = sc.nextLine();
                                     int option = Integer.parseInt(option_str);
-                                    if(option >=0 && option < 2){
+                                    if(option >=0 && option < 3){
                                         if(option == 0){
                                             return;
-                                        }else if(option == 1){
+                                        }
+                                        else if(option == 1){
                                             while (true){
                                                 int i = 1;
                                                 System.out.println("Select the class name with section: ");
@@ -117,9 +119,9 @@ public class Main {
                                                                 String addStudentNmbrStr = sc.nextLine();
                                                                 int addStudentNumbr = Integer.parseInt(addStudentNmbrStr);
                                                                 if(addStudentNumbr>0 && addStudentNumbr<=40){
-                                                                    LinkedList<Student> providedStudents = new LinkedList<>();
-                                                                    for(int k = 0 ; k<addStudentNumbr ; k++){
-                                                                        System.out.println("Please provide student roll number : ");
+
+                                                                    for(int k = 0 ; k<addStudentNumbr ; ){
+                                                                        System.out.println("\nPlease provide student roll number : ");
                                                                         try {
 
                                                                             String rollNumberStr = sc.nextLine();
@@ -130,20 +132,27 @@ public class Main {
 
                                                                                 if(std==null){
                                                                                     System.out.println("Roll number "+rollNumber+" is not found in the class");
-                                                                                }else{
+
+                                                                                }
+                                                                                else if(!std.getMarks().isEmpty()){
+                                                                                    System.out.println(ConsoleColors.RED+"Already this roll number is updated"+ConsoleColors.RESET);
+
+                                                                                }
+                                                                                else{
                                                                                     Marks m = new Marks(studentControl);
                                                                                     m.updateMarks(std);
                                                                                     providedStudents.add(std);
+                                                                                    k++;
                                                                                 }
                                                                             }else{
-                                                                                System.out.println("This roll number is not valid");
+                                                                                System.out.println(ConsoleColors.RED+"This roll number is not valid"+ConsoleColors.RESET);
                                                                             }
 
                                                                         }catch (Exception e){
-                                                                            System.out.println("Please Provide valid input");
+                                                                            System.out.println(ConsoleColors.RED+"Please Provide valid input"+ConsoleColors.RESET);
                                                                         }
                                                                     }
-                                                                    System.out.println(studentControl.showProvidedStudentResult(providedStudents));
+
 
                                                                 }
                                                                 else{
@@ -164,6 +173,14 @@ public class Main {
                                                     System.out.println("Please provide valid input");
                                                 }
 
+                                            }
+
+                                        }
+                                        else if(option == 2){
+                                            if(providedStudents.size()>0){
+                                                studentControl.showProvidedStudentResult(providedStudents);
+                                            }else{
+                                                System.out.println(ConsoleColors.RED+"Marks is not uploaded\n"+ConsoleColors.RESET);
                                             }
 
                                         }
@@ -209,12 +226,6 @@ public class Main {
             return false;
         return pat.matcher(email).matches();
     }
-
-    public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
-    }
-
 
 }
 
