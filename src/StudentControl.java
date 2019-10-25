@@ -1,16 +1,14 @@
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
-public class StudentControl {
+public class StudentControl  {
     private static LinkedList<Student> studentList;
 
     public LinkedList<Student> getStudentList() {
         return studentList;
     }
+
 
     public StudentControl(){
         studentList = new LinkedList<>();
@@ -25,22 +23,22 @@ public class StudentControl {
         return null;
     }
 
-    public HashMap addStudent(Student student){
+    public boolean addStudent(Student student){
         HashMap<Boolean,String> mp = new HashMap();
         if(checkUniqueRollNumber(student) ){
             if(checkClassEmpty(student.getSchoolClass())){
                 studentList.add(student);
-                mp.put(true,"student added successful");
+                //mp.put(true,"Student added successful");
 
-                return mp;
+                return true;
             }else{
-               mp.put(false," "+student.getSchoolClass().getClassName() + " and Section : "+student.getSchoolClass().getSectionName() + " is not empty");
-                return mp;
+               //mp.put(false," "+student.getSchoolClass().getClassName() + " and Section : "+student.getSchoolClass().getSectionName() + " is not empty");
+                return false;
             }
 
         }else{
-             mp.put(false,"Student Role Number "+student.getRoll_number()+" is not unique and role must be less than 40 and up to 0 ");
-             return mp;
+            // mp.put(false,"Student Role Number "+student.getRoll_number()+" is not unique and roll number must be 0 to 40 (0-40) ");
+             return false;
         }
 
     }
@@ -49,12 +47,14 @@ public class StudentControl {
         if(studentList.isEmpty()){
             return true;
         }
+
         for(Student sd  : studentList){
-            if(sd.getRoll_number() != student.getRoll_number() && student.getRoll_number()<=40 && student.getRoll_number()>0){
-                return true;
+            if(sd.getRoll_number() == student.getRoll_number() && sd.getSchoolClass().getClassName().equals(student.getSchoolClass().getClassName()) && sd.getSchoolClass().getSectionName().equals(student.getSchoolClass().getSectionName())){
+                System.out.println(student);;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     private boolean checkClassEmpty(SchoolClass schoolClass){
@@ -81,8 +81,8 @@ public class StudentControl {
 
         ArrayList<String> headers = new ArrayList<String>();
         headers.add("Subject");
-        headers.add("marks");
-        headers.add("grade");
+        headers.add("Marks");
+        headers.add("Grade");
 
         ArrayList<ArrayList<String>> content = new ArrayList<ArrayList<String>>();
 
@@ -104,7 +104,8 @@ public class StudentControl {
         ConsoleTable ct = new ConsoleTable(headers,content);
         System.out.println(sb.toString());
         ct.printTable();
-        System.out.println(ConsoleColors.Magenta+"      Total Grade point is : "+ grade(totalGradePoint(marksList))+ConsoleColors.RESET+"\n");
+        System.out.println(ConsoleColors.Magenta+"       Grade : "+ finalGrade(totalGradePoint(marksList))+  "   Total Marks : "+totalMarks(marksList)  +ConsoleColors.RESET+"\n");
+//        System.out.println(ConsoleColors.Magenta+"      Total Grade is : "+ finalGrade(totalGradePoint(marksList))+ConsoleColors.RESET+"\n");
 
     }
 
@@ -124,7 +125,7 @@ public class StudentControl {
                 sb.append(key + "    ||   " +value + "   ||   "+grade((Double) value) + "\n");
                 marksList.add(value);
             }
-            sb.append("\nTotal Grade point is : "+ grade(totalGradePoint(marksList)) + "\n\n");
+            sb.append("\nTotal Grade is : "+ grade(totalGradePoint(marksList)) + "\n\n");
         }
 
         return sb.toString();
@@ -132,9 +133,11 @@ public class StudentControl {
 
     public void showProvidedStudentResult(LinkedList<Student> students){
         //StringBuffer sb = new StringBuffer();
-        System.out.println(ConsoleColors.Magenta+"\n      Show All Uploaded Students Mark Sheet"+ConsoleColors.RESET);
+        System.out.println(ConsoleColors.Magenta+"\n                      All Students Marks Sheet"+ConsoleColors.RESET);
 
         ArrayList<String> headers = new ArrayList<String>();
+        headers.add("Class");
+        headers.add("Section");
         headers.add("Roll Number");
         headers.add("Student Name");
 
@@ -151,6 +154,8 @@ public class StudentControl {
             LinkedList marksList= new LinkedList();
             Map marksMap = std.getMarks();
             ArrayList<String> row1 = new ArrayList<String>();
+            row1.add(std.getSchoolClass().getClassName());
+            row1.add(std.getSchoolClass().getSectionName());
             row1.add(String.valueOf(std.getRoll_number()));
             row1.add(std.getName());
 //            sb.append("\n***** Student Name : "+std.getName() + " *****\n");
@@ -162,7 +167,7 @@ public class StudentControl {
                 row1.add(String.valueOf(value));
                 marksList.add(value);
             }
-            row1.add(grade(totalGradePoint(marksList)));
+            row1.add(finalGrade(totalGradePoint(marksList)));
             content.add(row1);
             //sb.append("\nTotal Grade point is : "+ grade(totalGradePoint(marksList)) + "\n\n");
         }
@@ -178,7 +183,7 @@ public class StudentControl {
         if(marks<=100 && marks>=0){
             if( marks>=80){
                 return "A";
-            }else if(marks >=60){
+            }else if(marks >= 60){
                 return "B";
             }else if(marks >= 40){
                 return "C";
@@ -189,13 +194,50 @@ public class StudentControl {
         return "Invalid marks";
     }
 
+    private String finalGrade(double marks){
+        if(marks<=100 && marks>=0){
+            if( marks>=80){
+                return "A";
+            }else if(marks >= 60){
+                return "B";
+            }else if(marks >= 40){
+                return "C";
+            }else{
+                return "FAIL";
+            }
+        }
+        return "Invalid marks";
+    }
+
+    public double totalMarks(LinkedList marks){
+       double sum = 0;
+        for(int i = 1 ; i<marks.size() ; i++) {
+            double mark = (double) marks.get(i);
+            sum += mark;
+        }
+        return sum;
+
+    }
+
+
     private double totalGradePoint(LinkedList marks){
         double sum = 0;
+        double count = 0;
         for(int i = 1 ; i<marks.size() ; i++){
             double mark = (double) marks.get(i);
             if(  mark>=40 && mark<=100){
-                sum += mark;
+                if(mark>=80){
+                    sum += 80;
+                }else if(mark>=60){
+                    sum += 60;
+                }else {
+                    sum += 40;
+                }
             }else{
+                count++;
+            }
+
+            if(count == 2){
                 return 0;
             }
         }
@@ -207,7 +249,7 @@ public class StudentControl {
     public String toString() {
         StringBuffer sb = new StringBuffer();
         for (Student student:studentList){
-            sb.append(student.getName() + " "+student.getRoll_number());
+            sb.append("Name : "+student.getName() + "  Roll Number : "+student.getRoll_number() +"  Class : "+student.getSchoolClass().getClassName() + "  Section : "+student.getSchoolClass().getSectionName()+"\n");
         }
         return sb.toString();
     }

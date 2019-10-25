@@ -18,9 +18,19 @@ public class Marks {
                 try {
                     String subjectMarkStr = sc.nextLine();
                     double subjectMark = Double.parseDouble(subjectMarkStr);
+                    subjectMark = Math.round(subjectMark);
+
                     if(subjectMark>=0 && subjectMark<=100){
-                        sd.setMarks(sd.getSchoolClass().getSubjects()[i],subjectMark);
-                        break;
+                        System.out.println("If you want to update marks press b (cmd=>b) or continue to add marks press any key(cmd=> enter) ");
+                        System.out.print("cmd>> ");
+                        String target = sc.nextLine();
+                        if(target.toLowerCase().equals("b")){
+                            System.out.println("Please provide updated "+sd.getSchoolClass().getSubjects()[i] +"  marks");
+                            continue;
+                        }else {
+                            sd.setMarks(sd.getSchoolClass().getSubjects()[i],subjectMark);
+                            break;
+                        }
                     }else {
                         System.out.println("Please provide valid marks");
                     }

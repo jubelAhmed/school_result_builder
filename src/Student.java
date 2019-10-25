@@ -6,7 +6,6 @@ public class Student {
     private int roll_number;
     private SchoolClass schoolClass;
     private HashMap<String,Double> marks;
-
     public Student(String name, int roll_number, SchoolClass schoolClass) {
         this.name = name;
         this.roll_number = roll_number;
@@ -49,3 +48,9 @@ public class Student {
                 '}';
     }
 }
+
+
+
+
+
+
